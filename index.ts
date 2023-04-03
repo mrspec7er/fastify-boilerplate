@@ -13,10 +13,19 @@ import paymentRoutes from "./routes/paymentRoute";
 import { schedulerReport } from "./controllers/utilityController";
 
 const PORT = Number(process.env.PORT) || 3000;
+const HOST = "0.0.0.0";
 
 const app = fastify({
   logger: {
-    level: "warn",
+    level: "info",
+    serializers: {
+      req(request) {
+        return {
+          method: request.method,
+          url: request.url,
+        };
+      },
+    },
   },
 });
 
@@ -48,7 +57,7 @@ app.ready().then(() => {
   app.scheduler.addSimpleIntervalJob(schedulerReport);
 });
 
-app.listen({ port: PORT }, (err, address) => {
+app.listen({ port: PORT, host: HOST }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);
